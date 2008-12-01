@@ -1,0 +1,3 @@
+<% for location in @locations %>
+  [<%= link_to_remote 'x' %>] <%= location.name %><% if location.date %> on <%= location.date.to_formatted_s(:short)%><% end %>
+<% end %>

@@ -1,0 +1,28 @@
+<table width="100%" style="height:100%;">
+  <tr rowspan="2">
+    <td width="80%">
+      <%= @map.div(:width => "100%", :height => "600px;") %>
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top">
+      <b>Tools</b>
+      
+      <% form_remote_tag :url => {:action => 'ajax_go_to'} do %>
+        Go To: <%= text_field_tag :location, '' %> <%= submit_tag 'go' %>
+      <% end %>
+      
+      <% form_remote_tag :url => {:action => 'ajax_add_marker'} do %>
+        Location<%= text_field_tag :location, '' %> 
+        Date: <%= text_field_tag :date, '' %>  
+        <%= submit_tag 'Add' %>
+      <% end %>
+      
+      <% for entry in @locations %>
+      <% end if @locations %>
+    </td>
+  </tr>
+  <tr>
+    <%= render :partial => 'map/partials/trip' %>
+  </tr>
+</table>

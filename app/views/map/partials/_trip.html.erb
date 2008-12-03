@@ -14,14 +14,19 @@
 
 <div class="trip_steps">
   <% locations.each_with_index do |location, i| %>
-   <!-- [<%= link_to_remote 'x', :url => {:action => "ajax_remove_marker", :id => location.id} %>] --> <%= location.name %>
+    <% link_to_remote 'x', :url => {:action => "ajax_remove_marker", :id => location.id} %>
+    <%= link_to_remote location.name, :url => {:action => "ajax_go_to_marker", :id => location.id} %>
     <% if location.date %><br/><%= location.date.to_formatted_s(:short) %><% end %>
     
-    <% if locations[i+1] %>
-      <% form_remote_tag :url => {:action => 'ajax_join_locations', :start => location.id, :end => locations[i+1]} do %>
-        <%= select_tag 'next_travel_method', options_for_select(['', 'air','boat','foot','car','train'], location[:next_travel_method]), :onchange => "this.form.onsubmit();" %> to
+    <% if @trip.can_edit?(current_user)%>
+      <% if locations[i+1] %>
+        <% form_remote_tag :url => {:action => 'ajax_join_locations', :start => location.id, :end => locations[i+1]} do %>
+          <%= select_tag 'next_travel_method', options_for_select(['', 'air','boat','foot','car','train'], location[:next_travel_method]), :onchange => "this.form.onsubmit();" %> to
+        <% end %>
+        <br/>
       <% end %>
-      <br/>
+    <% else %>
+      then by <b><%= location[:next_travel_method] %></b> to<br/>
     <% end %>
   <% end %>
 </div>

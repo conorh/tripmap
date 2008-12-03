@@ -1,19 +1,18 @@
 class MapController < ApplicationController
-  before_filter :require_user, :except => :index
+  before_filter :require_user, :except => [:index, :ajax_go_to, :ajax_go_to_marker]
   
   def index
     @map = GMap.new("map_div")
     @map.control_init(:large_map => true, :map_type => true)
-    @map.center_zoom_init([49.12,-56.453],2)
-     
+    
     # Search for a trip from the session, by id, or create a new one 
-    unless @trip = Trip.find_by_id(session[:trip]) or (params[:id] and @trip = Trip.find_by_id(params[:id]))
+    unless (params[:id] and @trip = Trip.find_by_id(params[:id])) or @trip = Trip.find_by_id(session[:trip])
       @trip = Trip.create
     end
     
     # Plot the locations and journey lines for the current trip on the map
     map_data = {:markers => {}, :polylines => {}}
-    @trip.locations.each do |l| 
+    @trip.locations.each do |l|
       map_data[:markers][l.id] = GMarker.new([l.latitude,l.longitude])
       if l.next_location
         map_data[:polylines][l.id] = GPolyline.new([l.coords, l.next_location.coords],"#ff0000",3,1.0)
@@ -22,6 +21,12 @@ class MapController < ApplicationController
 
   	@map.overlay_global_init(GMarkerGroup.new(true, map_data[:markers]), "trip_markers")  	
   	@map.overlay_global_init(GPolylineGroup.new(true, map_data[:polylines]), "trip_polylines")
+    
+    if @trip.locations.length > 0
+      @map.center_zoom_on_points_init(*@trip.locations.collect {|l| [l.latitude, l.longitude] })
+    else
+      @map.center_zoom_init([49.12,-56.453],2)
+    end    
     
     session[:trip] = @trip.id
   end
@@ -71,14 +76,25 @@ class MapController < ApplicationController
     end
   end
   
+  def ajax_go_to_marker
+    location = Location.find(params[:id])
+    render :update do |page|
+      if location      
+        @map = Variable.new("map")
+        page << @map.set_center(GLatLng.new(location.coords), 4)
+      end
+    end
+  end
+  
   # Go to a location on the map
-  def ajax_go_to    
+  def ajax_go_to
   	results = Geocoding::get(params[:location])
+  	
   	if results.status == Geocoding::GEO_SUCCESS
-  		coord = results[0].latlon
+  		coords = results[0].latlon
       render :update do |page|
         @map = Variable.new("map")
-        page << @map.set_center(GLatLng.new(coord), 3)
+        page << @map.set_center(GLatLng.new(coords), 4)
       end
     end 
   end

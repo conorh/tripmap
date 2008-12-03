@@ -112,7 +112,7 @@ GMarkerGroup.prototype.centerAndZoomOnMarkers = function() {
 	    tmpMarkers.push(this.markersById[id]);
 	}
 	if(tmpMarkers.length > 0){
-    	    this.map.centerAndZoomOnMarkers(tmpMarkers);
+    	this.map.centerAndZoomOnMarkers(tmpMarkers);
 	} 
     }
 }	

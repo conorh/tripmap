@@ -2,8 +2,7 @@
 
 <% form_for @user_session, :url => user_session_path do |f| %>
   <%= f.error_messages %>
-  <div id="login_container"<% unless @user_session.openid_identifier.blank? %> style="display: none;"<% end %>>
-    <%= f.label :login %> (or <%= link_to_function "login using OpenID", "$('login_container').toggle(); $('openid_container').toggle();" %>)<br />
+  <div id="login_container">
     <%= f.text_field :login %><br />
     <br />
     <%= f.label :password %><br />

@@ -11,8 +11,17 @@
 
 <table width="100%" style="height:100%;">
   <tr>
-    <td colspan="2">
+    <td>
       <h1>Conor's Trip Around The World</h1>  
+    </td>
+    <td>
+      <% if !current_user %>
+        <%= link_to "Register", new_account_path %> |
+        <%= link_to "Log In", new_user_session_path %>
+      <% else %>
+        <%= link_to "My Account", account_path %> |
+        <%= link_to "Logout", user_session_path, :method => :delete, :confirm => "Are you sure you want to logout?" %>
+      <% end %>      
     </td>
   </tr>
   <tr>
@@ -23,22 +32,22 @@
       <div id="locations_div">
         <%= render :partial => '/map/partials/trip', :locals => {:locations => @trip.locations} %>
       </div>
-      
       <div class="tools_div">
         <b>Go To</b>
         <% form_remote_tag :url => {:action => 'ajax_go_to'} do %>
           <%= text_field_tag :location, '', :style => "width: 150px;" %> <%= submit_tag 'go' %>
         <% end %>
-        
+      
         <br/>
-        
-        <b>Add Location</b>
-        <% form_remote_tag :url => {:action => 'ajax_add_marker'} do %>
-          <table>
-            <tr><td>Location:</td><td><%= text_field_tag :location, '' %></td></tr>
-            <tr><td>Date:</td><td><%= text_field_tag :date, '' %></td></tr>
-          </table>
-          <%= submit_tag 'Add' %>
+        <% if @trip.can_edit?(current_user) %>
+          <b>Add Location</b>
+          <% form_remote_tag :url => {:action => 'ajax_add_marker'} do %>
+            <table>
+              <tr><td>Location:</td><td><%= text_field_tag :location, '' %></td></tr>
+              <tr><td>Date:</td><td><%= text_field_tag :date, '' %></td></tr>
+            </table>
+            <%= submit_tag 'Add' %>
+          <% end %>
         <% end %>
       </div>
     </td>

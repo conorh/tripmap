@@ -57,6 +57,15 @@ GMarkerGroup.prototype.addMarker = function(marker,id){
     }
 }
 
+//Add a polyline to the GPolylineGroup ; Adds it now to the map if the GPolylineGroup is active
+GMarkerGroup.prototype.removeMarker = function(id){
+	var marker = this.markersById[id];
+    if(marker != undefined && this.active && this.map != undefined ){
+	   this.markersById[id] = null;
+	   this.map.removeOverlay(marker);
+    }
+}
+
 //Open the info window (or info window tabs) of a marker
 GMarkerGroup.prototype.showMarker = function(id){
     var marker = this.markersById[id];

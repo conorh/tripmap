@@ -1,28 +1,46 @@
+<style>
+  h1 {
+    padding-bottom: 10px; margin: 0px;
+  }
+  .tools_div {
+    font: Arial;
+    font-size: 14px;
+    padding-top: 10px; 
+  }
+</style>
+
 <table width="100%" style="height:100%;">
-  <tr rowspan="2">
-    <td width="80%">
+  <tr>
+    <td colspan="2">
+      <h1>Conor's Trip Around The World</h1>  
+    </td>
+  </tr>
+  <tr>
+    <td width="80%" rowspan="2" valign="top">
       <%= @map.div(:width => "100%", :height => "600px;") %>
     </td>
-  </tr>
-  <tr>
     <td width="20%" valign="top">
-      <b>Tools</b>
+      <div id="locations_div">
+        <%= render :partial => '/map/partials/trip', :locals => {:locations => @trip.locations} %>
+      </div>
       
-      <% form_remote_tag :url => {:action => 'ajax_go_to'} do %>
-        Go To: <%= text_field_tag :location, '' %> <%= submit_tag 'go' %>
-      <% end %>
-      
-      <% form_remote_tag :url => {:action => 'ajax_add_marker'} do %>
-        Location<%= text_field_tag :location, '' %> 
-        Date: <%= text_field_tag :date, '' %>  
-        <%= submit_tag 'Add' %>
-      <% end %>
-      
-      <% for entry in @locations %>
-      <% end if @locations %>
+      <div class="tools_div">
+        <b>Go To</b>
+        <% form_remote_tag :url => {:action => 'ajax_go_to'} do %>
+          <%= text_field_tag :location, '', :style => "width: 150px;" %> <%= submit_tag 'go' %>
+        <% end %>
+        
+        <br/>
+        
+        <b>Add Location</b>
+        <% form_remote_tag :url => {:action => 'ajax_add_marker'} do %>
+          <table>
+            <tr><td>Location:</td><td><%= text_field_tag :location, '' %></td></tr>
+            <tr><td>Date:</td><td><%= text_field_tag :date, '' %></td></tr>
+          </table>
+          <%= submit_tag 'Add' %>
+        <% end %>
+      </div>
     </td>
-  </tr>
-  <tr>
-    <%= render :partial => 'map/partials/trip' %>
   </tr>
 </table>

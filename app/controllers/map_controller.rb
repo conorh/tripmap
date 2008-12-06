@@ -1,34 +1,31 @@
 class MapController < ApplicationController
-  before_filter :require_user, :except => [:index, :ajax_go_to, :ajax_go_to_marker]
+#  before_filter :require_user, :except => [:new, :index, :ajax_go_to, :ajax_go_to_marker]
+  
+  def new
+    @trip = Trip.create
+    session[:trip] = @trip.id
+        
+    if !params[:location].blank? and location = Location.geocode(params[:location])
+      @trip.locations << location
+    elsif !params[:location].blank?
+      flash[:notice] = "Sorry we were unable to locate #{params[:location]}."
+    end
+    
+    create_map
+    
+    redirect_to :action => 'index', :id => @trip.id
+  end
   
   def index
-    @map = GMap.new("map_div")
-    @map.control_init(:large_map => true, :map_type => true)
-    
     # Search for a trip from the session, by id, or create a new one 
     unless (params[:id] and @trip = Trip.find_by_id(params[:id])) or @trip = Trip.find_by_id(session[:trip])
-      @trip = Trip.create
-    end
-    
-    # Plot the locations and journey lines for the current trip on the map
-    map_data = {:markers => {}, :polylines => {}}
-    @trip.locations.each do |l|
-      map_data[:markers][l.id] = GMarker.new([l.latitude,l.longitude])
-      if l.next_location
-        map_data[:polylines][l.id] = GPolyline.new([l.coords, l.next_location.coords],"#ff0000",3,1.0)
-      end
+      flash[:error] = "Sorry could not find a map."
+      redirect_to "/" and return
     end
 
-  	@map.overlay_global_init(GMarkerGroup.new(true, map_data[:markers]), "trip_markers")  	
-  	@map.overlay_global_init(GPolylineGroup.new(true, map_data[:polylines]), "trip_polylines")
+    @page_title = @trip.name unless @trip.name.blank?    
     
-    if @trip.locations.length > 0
-      @map.center_zoom_on_points_init(*@trip.locations.collect {|l| [l.latitude, l.longitude] })
-    else
-      @map.center_zoom_init([49.12,-56.453],2)
-    end    
-    
-    session[:trip] = @trip.id
+    create_map
   end
   
   # Add a location to the map
@@ -124,6 +121,31 @@ class MapController < ApplicationController
       
       location.destroy
       page.replace_html("locations_div", render(:partial => '/map/partials/trip', :locals => {:locations => @trip.locations}))      
+    end
+  end
+
+private
+
+  def create_map
+    @map = GMap.new("map_div")
+    @map.control_init(:large_map => true, :map_type => true)
+
+    # Plot the locations and journey lines for the current trip on the map
+    map_data = {:markers => {}, :polylines => {}}
+    @trip.locations.each do |l|
+      map_data[:markers][l.id] = GMarker.new([l.latitude,l.longitude])
+      if l.next_location
+        map_data[:polylines][l.id] = GPolyline.new([l.coords, l.next_location.coords],"#ff0000",3,1.0)
+      end
+    end
+
+    @map.overlay_global_init(GMarkerGroup.new(true, map_data[:markers]), "trip_markers")  	
+    @map.overlay_global_init(GPolylineGroup.new(true, map_data[:polylines]), "trip_polylines")
+
+    if @trip.locations.length > 0
+      @map.center_zoom_on_points_init(*@trip.locations.collect {|l| [l.latitude, l.longitude] })
+    else
+      @map.center_zoom_init([49.12,-56.453],2)
     end
   end
 end

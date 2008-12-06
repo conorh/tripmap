@@ -1,7 +1,9 @@
 <style>
   .trip_steps {
     font: Arial;
-    font-size: 14px;    
+    font-size: 11px;
+    overflow : auto;
+    height: 500px;
   }
   
   .trip_steps form {
@@ -13,20 +15,38 @@
 </style>  
 
 <div class="trip_steps">
+  <table>
   <% locations.each_with_index do |location, i| %>
-    <% link_to_remote 'x', :url => {:action => "ajax_remove_marker", :id => location.id} %>
-    <%= link_to_remote location.name, :url => {:action => "ajax_go_to_marker", :id => location.id} %>
-    <% if location.date %><br/><%= location.date.to_formatted_s(:short) %><% end %>
-    
-    <% if @trip.can_edit?(current_user)%>
-      <% if locations[i+1] %>
-        <% form_remote_tag :url => {:action => 'ajax_join_locations', :start => location.id, :end => locations[i+1]} do %>
-          <%= select_tag 'next_travel_method', options_for_select(['', 'air','boat','foot','car','train'], location[:next_travel_method]), :onchange => "this.form.onsubmit();" %> to
+    <tr>
+      <td>
+        <% if @trip.can_edit?(current_user) %>        
+          <%= link_to_remote 'x', :url => {:action => "ajax_remove_marker", :id => location.id}, :html => {:style => 'color: red;'} %>
         <% end %>
-        <br/>
-      <% end %>
+        <%= link_to_remote location.name, :url => {:action => "ajax_go_to_marker", :id => location.id} %>
+      </td>
+      <td>
+        <% if location.date %><br/><%= location.date.to_formatted_s(:short) %><% end %>
+      </td>
+    </tr>
+   
+    <% if @trip.can_edit?(current_user)%>
+      <tr>    
+        <td colspan="2">      
+          <% if locations[i+1] %>
+            <% form_remote_tag :url => {:action => 'ajax_join_locations', :start => location.id, :end => locations[i+1]} do %>
+              travel by <%= select_tag 'next_travel_method', options_for_select(['', 'air','boat','foot','car','train'], location[:next_travel_method]), :onchange => "this.form.onsubmit();" %> to
+            <% end %>
+            <br/>
+          <% end %>
+        </td>
+      </tr>      
     <% else %>
-      then by <b><%= location[:next_travel_method] %></b> to<br/>
+      <tr>
+        <td colspan="2">
+          travel 120.2 miles by <%= location[:next_travel_method] %> to
+        </td>
+      </tr>
     <% end %>
   <% end %>
+  </table>
 </div>

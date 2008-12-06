@@ -1,0 +1,177 @@
+* {
+  padding:0;
+  margin:0;
+  font-weight:normal;
+  font-size:1em;
+}
+
+body, html { width:100%; height:100% } 
+
+body {
+  background-color: #26518A;
+  color:#ffffff;
+  font-family: "Lucida Grande", "Lucida Sans", Helvetica, Verdana, sans-serif;
+  font-size:82%;
+  margin:2px 0;
+}
+
+#main {
+  width:95%;
+  margin:0 auto;
+  padding: 0 0 0 0;
+}
+
+#header {
+  background-color: #152C4C;
+  padding:10px 20px 10px 20px;
+  margin-bottom:0.6em;
+}
+#header h1,
+#header h1 a {
+  padding:0px;
+  color:#ffffff;
+}
+#header ul { }
+#header li {
+  display:inline;
+  list-style-type:none;
+  padding-left: 25px;
+}
+#header a {
+  color:#B7BAC0;
+  text-decoration:none;
+  font-weight:bold;
+  font-size: 1.1em;
+}
+
+#content {
+  padding: 0 0px 0 0px;
+}
+
+#tags {
+  float: right;
+  background:#152C4C;
+  border:1px solid #26518A;
+  padding:1em 15px;
+  line-height:1.5;
+  margin-bottom:2em;
+  font-family: 'Courier New', 'Terminal', monospace;
+  color: #E6E0DB;
+  overflow: auto;
+  font-size: 12px;  
+}
+
+#snippets {
+  background:#152C4C;
+  border: 1px solid #AAA;
+}
+
+/* TEXT */
+h1, h2, h3, p {
+}
+
+h1 {
+  font-size:2em;
+  padding-bottom:0.2em;
+}
+h2 {
+  font-size:1.5em;
+  padding-bottom:0.1em;
+}
+h3 {
+  font-size:1.2em;
+  font-weight:bold;
+}
+p {
+  padding-bottom:0.5em;
+  line-height:1.5;
+}
+a:link {
+  color:#66FF33;
+}
+a:visited {
+  color:#cccccc;
+}
+ul,ol {
+  margin: 0 0 10px 20px;
+}
+
+/* Boxes */
+.blue_box {
+  background:#152C4C;
+  padding:1em 15px;
+  line-height:1.5;
+  margin-bottom:2em;
+  font-family: 'Courier New', 'Terminal', monospace;
+  color: #E6E0DB;
+  overflow: auto;
+  font-size: 12px;
+}
+
+/* Error Messages */
+.errorExplanation {
+  margin: 10px 0px 10px 0px;
+  background-color: #152C4C;
+}
+
+.errorExplanation h2 {
+  background-color: #CC0000;
+  color: #FFFFFF;
+  text-transform: none;
+  border: 0px;
+  text-align: left;
+  font-weight: bold;
+  padding: 3px 3px 3px 3px;
+  margin: 0px;
+  font-size: 12px;
+}
+
+.errorExplanation ul {
+  margin: 0px;
+  padding: 6px 3px 3px 10px;
+}
+.errorExplanation ul li {
+  list-style: none;
+  padding-bottom: 6px;
+}
+
+span.field_with_errors {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+}
+
+.field_with_errors input, .field_with_errors select, .field_with_errors textarea {
+  border: 1px solid #F00;
+  background-color: #FFF0F0;
+}
+
+/* Forms */
+#input {
+	font-size: 1.5em;
+}
+
+.labeled dt { 
+  display: block;
+  float: left;
+  clear: left;
+  text-align: right;
+  font-weight: bold;	
+  width: 80px;
+  line-height: 2em;	
+}
+.labeled dd { 
+  display: block;
+  text-align: left;
+  margin-left: 85px;
+  line-height: 2em;	
+}
+
+/* Flash */
+#flash_notice, #flash_error {
+  margin-bottom: 10px;
+  padding: 10px;
+  color: black;
+}
+#flash_notice { background-color: #FFF89E; border: 1px solid #E0E0AA; }
+#flash_error  { background-color: #FFCCCC; border: 1px solid #E0AAAA; }

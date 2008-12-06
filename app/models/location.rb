@@ -14,4 +14,13 @@ class Location < ActiveRecord::Base
   def coords
     [self.latitude, self.longitude]
   end
+  
+  
+  def self.geocode(location)
+  	results = Geocoding::get(location)
+  	if results.status == Geocoding::GEO_SUCCESS
+  	  coord = results[0].latlon
+      Location.new(:name => location, :latitude => coord[0], :longitude => coord[1])
+    end
+  end
 end

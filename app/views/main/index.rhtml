@@ -1,0 +1,14 @@
+<div style="text-align: center; padding-top: 30px;">
+  <h2>Create <a href="#">maps</a> of your travels and <a href="#">share them</a> with your friends.</h2>
+</div>
+
+<div style="text-align: center; padding-top: 30px;">
+  <h2>Enter the <a href="#">start location</a> for your trip and create your map.</h2>
+</div>
+
+<div class="start" style="margin-top: 30px; text-align: center;">
+  <% form_tag :controller => 'map', :action => 'new' do %>
+    <input name="location" type="text" style="width: 250px;" />
+    <input name="submit" value="get started" type="submit" />
+  <% end %>
+</div>

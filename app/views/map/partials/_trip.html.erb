@@ -15,38 +15,75 @@
 </style>  
 
 <div class="trip_steps">
-  <table>
+  <table style="border-collapse: collapse; width:100%">
+    <tr>
+      <td bgcolor="#152C4C">Location</td>
+      <td bgcolor="#152C4C">Dates</td>
+      <td bgcolor="#152C4C"></td>
+      <td bgcolor="#152C4C"></td>
+    </tr>
+    
   <% locations.each_with_index do |location, i| %>
     <tr>
       <td>
-        <% if @trip.can_edit?(current_user) %>        
-          <%= link_to_remote 'x', :url => {:action => "ajax_remove_marker", :id => location.id}, :html => {:style => 'color: red;'} %>
-        <% end %>
-        <%= link_to_remote location.name, :url => {:action => "ajax_go_to_marker", :id => location.id} %>
+        <%= i+1 %>. <%= link_to_remote location.name, :url => {:action => "ajax_go_to_marker", :id => location.id} %>
       </td>
       <td>
-        <% if location.date %><br/><%= location.date.to_formatted_s(:short) %><% end %>
+        <% if location.start_date %><%= location.start_date.strftime("%m/%d/%y") %><% end %><% if location.end_date %> to <%= location.end_date.strftime("%m/%d/%y") %><% end %>
+      </td>
+      <td>
+      </td>
+      <td align="right">
+        <% if @trip.can_edit?(current_user) -%>
+          <a href="#" onclick="Element.toggle('edit_<%= location.id %>'); return false;">edit</a>
+        <% end -%>
       </td>
     </tr>
-   
-    <% if @trip.can_edit?(current_user)%>
-      <tr>    
-        <td colspan="2">      
-          <% if locations[i+1] %>
-            <% form_remote_tag :url => {:action => 'ajax_join_locations', :start => location.id, :end => locations[i+1]} do %>
-              travel by <%= select_tag 'next_travel_method', options_for_select(['', 'air','boat','foot','car','train'], location[:next_travel_method]), :onchange => "this.form.onsubmit();" %> to
+    <% if @trip.can_edit?(current_user) %>
+    <tr>
+      <td colspan="4">
+          <div id="edit_<%= location.id %>" style="display: none;">
+            <% form_remote_tag :url => {:action => 'ajax_edit_marker', :id => location.id} do %>
+              <%= hidden_field_tag('commit', 'Submit') %>
+              <table>
+                <tr><td>Location</td><td><%= text_field_tag "location[name]", location.name, :style => 'width: 200px;' %></td></tr>
+                <tr><td>Start Date</td><td><%= calendar_date_select_tag "location[start_date]", location.start_date, :style => 'width: 120px;' %></td></tr>
+                <tr><td>End Date</td><td><%= calendar_date_select_tag "location[end_date]", location.end_date, :style => 'width: 120px;' %></td></tr>
+                <tr><td valign="top">Notes</td><td><%= text_area_tag "location[notes]", location.notes ,:style => 'width: 200px; height: 50px;' %></td></tr>
+                <tr><td>&nbsp;</td><td>
+                <%= submit_tag 'Submit', :name => "_commit", :onclick => "Form.getInputs(this.form, null, 'commit')[0].value = 'Submit'" %>
+                <%= submit_tag 'Remove Location', :name => "_commit", :onclick => "Form.getInputs(this.form, null, 'commit')[0].value = 'Remove Location'" %>
+                </td></tr>
+              </table>
+
             <% end %>
-            <br/>
-          <% end %>
-        </td>
-      </tr>      
-    <% else %>
-      <tr>
-        <td colspan="2">
-          travel 120.2 miles by <%= location[:next_travel_method] %> to
-        </td>
-      </tr>
+          </div>
+      </td>
+    </tr>
     <% end %>
+    <tr>
+      <td colspan="4">     
+        <% if locations[i+1] %>
+        &nbsp;travel <%= dist(location.distance_from(locations[i+1])) %> km to
+        <% end %>
+      </td>
+    </tr>
   <% end %>
+  <tr>
+    <td colspan="4"style="padding-top: 10px;">
+      &nbsp;<a href="#" onclick="Element.toggle('add_new_location'); return false;">add new location</a>
+      <div id="add_new_location" style="display: none;">
+      <% form_remote_tag :url => {:action => 'ajax_add_marker'} do %>
+        <table>
+          <tr><td>Location</td><td><%= text_field_tag "location[name]", '', :style => 'width: 200px;' %></td></tr>
+          <tr><td>Start Date</td><td><%= calendar_date_select_tag "location[start_date]", nil, :style => 'width: 120px;' %></td></tr>
+          <tr><td>End Date</td><td><%= calendar_date_select_tag "location[end_date]", nil, :style => 'width: 120px;' %></td></tr>
+          <tr><td valign="top">Notes</td><td><%= text_area_tag "location[notes]", '' ,:style => 'width: 200px; height: 50px;' %></td></tr>
+        </table>
+        <%= submit_tag 'Add' %>
+      <% end %>  
+      </div>
+    </td>
+  </tr>
   </table>
 </div>

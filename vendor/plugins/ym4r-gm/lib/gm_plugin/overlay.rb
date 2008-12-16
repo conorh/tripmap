@@ -53,7 +53,10 @@ module Ym4r
       end
     end
         
-    #Represents a definition of an icon. You can pass rubyfied versions of the attributes detailed in the Google Maps API documentation. You can initialize global icons to be used in the application by passing a icon object, along with a variable name, to GMap#icon_init. If you want to declare an icon outside this, you will need to declare it first, since the JavaScript constructor does not accept any argument.
+    #Represents a definition of an icon. You can pass rubyfied versions of the attributes detailed in the Google Maps API documentation. 
+    # You can initialize global icons to be used in the application by passing a icon object, along with a variable name, 
+    # to GMap#icon_init. If you want to declare an icon outside this, you will need to declare it first, since the JavaScript
+    # constructor does not accept any argument.
     class GIcon
       include MappingObject
       DEFAULT = Variable.new("G_DEFAULT_ICON")

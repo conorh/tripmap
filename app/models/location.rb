@@ -15,12 +15,25 @@ class Location < ActiveRecord::Base
     [self.latitude, self.longitude]
   end
   
-  
   def self.geocode(location)
   	results = Geocoding::get(location)
   	if results.status == Geocoding::GEO_SUCCESS
   	  coord = results[0].latlon
       Location.new(:name => location, :latitude => coord[0], :longitude => coord[1])
     end
+  end  
+  
+  def distance_from(l)
+    r = 6371; # radius of earth in kilometers
+    dLat = radians(l.latitude - self.latitude)
+    dLon = radians(l.longitude - self.longitude)
+    a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(radians(l.latitude)) * Math.cos(radians(self.longitude)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+    c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    d = r * c;
+  end
+  
+private
+  def radians(val)
+    val * Math::PI / 180 
   end
 end

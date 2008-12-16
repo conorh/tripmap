@@ -36,13 +36,15 @@
       <td align="right">
         <% if @trip.can_edit?(current_user) -%>
           <a href="#" onclick="Element.toggle('edit_<%= location.id %>'); return false;">edit</a>
+        <% elsif !location.notes.blank? -%>
+          <a href="#" onclick="Element.toggle('notes_<%= location.id %>'); return false;">notes</a>        
         <% end -%>
       </td>
     </tr>
     <% if @trip.can_edit?(current_user) %>
     <tr>
       <td colspan="4">
-          <div id="edit_<%= location.id %>" style="display: none;">
+          <div id="edit_<%= location.id %>" style="display: none; padding-top: 5px; padding-bottom: 8px;">
             <% form_remote_tag :url => {:action => 'ajax_edit_marker', :id => location.id} do %>
               <%= hidden_field_tag('commit', 'Submit') %>
               <table>
@@ -55,35 +57,51 @@
                 <%= submit_tag 'Remove Location', :name => "_commit", :onclick => "Form.getInputs(this.form, null, 'commit')[0].value = 'Remove Location'" %>
                 </td></tr>
               </table>
-
             <% end %>
           </div>
       </td>
     </tr>
+    <% elsif !location.notes.blank? -%>
+    <tr>
+      <td colspan="4">
+        <div id="notes_<%= location.id %>" style="display: none; padding: 5px;"><%= h location.notes %></div>
+      </td>
+    </td>
     <% end %>
     <tr>
       <td colspan="4">     
         <% if locations[i+1] %>
-        &nbsp;travel <%= dist(location.distance_from(locations[i+1])) %> km to
+          &nbsp;<% form_remote_tag :url => {:action => 'ajax_join_locations', :start => location.id, :end => locations[i+1]} do %>
+            travel <%= dist(location.distance_from(locations[i+1])) %> km
+            <% if @trip.can_edit?(current_user) %>
+              by <%= select_tag 'next_travel_method', options_for_select(['', 'air','boat','foot','car','train','bus','other'], location[:next_travel_method]), :onchange => "this.form.onsubmit();" %> 
+            <% elsif !location[:next_travel_method].blank? %>
+              by <%= location[:next_travel_method] %> to
+            <% end %>
+          <% end %>
+          <br/>
         <% end %>
       </td>
     </tr>
   <% end %>
-  <tr>
-    <td colspan="4"style="padding-top: 10px;">
-      &nbsp;<a href="#" onclick="Element.toggle('add_new_location'); return false;">add new location</a>
-      <div id="add_new_location" style="display: none;">
-      <% form_remote_tag :url => {:action => 'ajax_add_marker'} do %>
-        <table>
-          <tr><td>Location</td><td><%= text_field_tag "location[name]", '', :style => 'width: 200px;' %></td></tr>
-          <tr><td>Start Date</td><td><%= calendar_date_select_tag "location[start_date]", nil, :style => 'width: 120px;' %></td></tr>
-          <tr><td>End Date</td><td><%= calendar_date_select_tag "location[end_date]", nil, :style => 'width: 120px;' %></td></tr>
-          <tr><td valign="top">Notes</td><td><%= text_area_tag "location[notes]", '' ,:style => 'width: 200px; height: 50px;' %></td></tr>
-        </table>
-        <%= submit_tag 'Add' %>
-      <% end %>  
-      </div>
-    </td>
-  </tr>
+  
+  <% if @trip.can_edit?(current_user) %>  
+    <tr>
+      <td colspan="4"style="padding-top: 10px;">
+        &nbsp;[<a href="#" onclick="Element.toggle('add_new_location'); return false;">Add new location</a>]
+        <div id="add_new_location" style="display: none;">
+        <% form_remote_tag :url => {:action => 'ajax_add_marker'} do %>
+          <table>
+            <tr><td>Location</td><td><%= text_field_tag "location[name]", '', :style => 'width: 200px;' %></td></tr>
+            <tr><td>Start Date</td><td><%= calendar_date_select_tag "location[start_date]", nil, :style => 'width: 120px;' %></td></tr>
+            <tr><td>End Date</td><td><%= calendar_date_select_tag "location[end_date]", nil, :style => 'width: 120px;' %></td></tr>
+            <tr><td valign="top">Notes</td><td><%= text_area_tag "location[notes]", '' ,:style => 'width: 200px; height: 50px;' %></td></tr>
+          </table>
+          <%= submit_tag 'Add' %>
+        <% end %>  
+        </div>
+      </td>
+    </tr>
+  <% end %>
   </table>
 </div>

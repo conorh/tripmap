@@ -2,7 +2,7 @@
 #   gem install sqlite3-ruby (not necessary on OS X Leopard)
 development:
   adapter: mysql
-  database: tripmap
+  database: tripmap_dev
   host: localhost
   user: root
 
@@ -17,6 +17,6 @@ test:
 
 production:
   adapter: mysql
-  database: tripmap
+  database: tripmap_prod
   host: localhost
   user: root

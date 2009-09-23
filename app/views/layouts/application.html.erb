@@ -5,7 +5,7 @@
   <title><%= @page_title || 'Plot My Trip'-%></title>
   <%= stylesheet_link_tag 'application' %>
   <%= javascript_include_tag :defaults %>
-  <%= GMap.header(:key => gmap_key) %>
+  <%= GMap.header(:key => get_key_from_host(request.host)) %>
   <%= javascript_include_tag("markerGroup") %>
   <%= javascript_include_tag("polylineGroup") %>
   <%= @map.to_html if @map %>
